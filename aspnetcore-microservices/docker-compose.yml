@@ -11,8 +11,8 @@ services:
     image: mysql:8.0.29
   customerdb:
     image: postgres:alpine3.16
-  #basketdb:
-  #  image: redis:alpine
+  basketdb:
+    image: redis:alpine
   #inventorydb: 
   #  image: mongo
   # #infrastructure section
@@ -37,6 +37,11 @@ services:
      build:
        context: .
        dockerfile: src/Services/Customer.API/Dockerfile
+  basket.api:
+     image: basketapi:runtime
+     build:
+       context: .
+       dockerfile: src/Services/Basket.API/Dockerfile
 #microservices
 networks:
   default:

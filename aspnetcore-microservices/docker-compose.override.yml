@@ -25,12 +25,6 @@ services:
         - "5432:5432"
     volumes: 
         - postgres_data:/var/lib/postgresql/data
-##basketdb: 
-#  basketdb:
-#    container_name: basketdb
-#    restart: always 
-#    ports: 
-#        - "6379:6379" 
 ##inventorydb: mongo 
 #  inventorydb: 
 #    container_name: inventorydb
@@ -104,4 +98,14 @@ services:
      ports:
         - "6003:80"
      restart: always
-  
+
+  basket.api:
+      container_name: basket.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URL=http://+:80
+        - "CacheSettings:ConnectionString=basketdb:6379"
+      depends_on:
+        - basketdb
+      ports:
+        - "6005:80"

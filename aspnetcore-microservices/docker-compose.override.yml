@@ -25,12 +25,17 @@ services:
         - "5432:5432"
     volumes: 
         - postgres_data:/var/lib/postgresql/data
-##basketdb: 
-#  basketdb:
-#    container_name: basketdb
-#    restart: always 
-#    ports: 
-#        - "6379:6379" 
+
+  orderdb: 
+    container_name: orderdb
+    environment:
+        SA_PASSWORD: "123456"
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports: 
+        - "1435:1433"
+    volumes: 
+        - sqlserver_data:/var/lib/sqlserver/data
 ##inventorydb: mongo 
 #  inventorydb: 
 #    container_name: inventorydb
@@ -40,12 +45,12 @@ services:
 #    volumes: 
 #        - mongo_data:/data/db 
 ##infrastructure section 
-#  rabbitmq:
-#    container_name: rabbitmq
-#    restart: always
-#    ports: 
-#        - "5672:5672" 
-#        - "15672:15672"
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    ports: 
+       - "5672:5672" 
+       - "15672:15672"
 #page admin
   pgadmin:
     container_name: pgadmin
@@ -104,4 +109,29 @@ services:
      ports:
         - "6003:80"
      restart: always
-  
+
+  basket.api:
+      container_name: basket.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URL=http://+:80
+        - "CacheSettings:ConnectionString=basketdb:6379"
+        - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      depends_on:
+        - basketdb
+        - rabbitmq
+      ports:
+        - "6005:80"
+
+  ordering.api:
+      container_name: ordering.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URL=http://+:80
+        - "ConnectionStrings:DefaultConnectionString=Server=orderdb;Database=OrderDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;User Id =sa;Password=123456"
+        - "EventBusSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      depends_on:
+        - orderdb
+        - rabbitmq
+      ports:
+        - "6006:80"

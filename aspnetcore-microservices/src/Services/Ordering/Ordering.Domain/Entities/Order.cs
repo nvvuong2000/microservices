@@ -1,13 +1,7 @@
 ﻿using Constracts.Domains;
 using Ordering.Domain.Enum;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Ordering.Domain.Entities
 {
     public class Order : EntityAuditBase<long>
@@ -15,7 +9,7 @@ namespace Ordering.Domain.Entities
         [Required]
         public string UserName { get; set; }
         [Column(TypeName = "decimal(10,2)")]
-        public decimal TotalPrice { get;set; }
+        public decimal TotalPrice { get; set; }
         [Required]
         [Column(TypeName = "nvarchar(50)")]
         public string FirstName { get; set; }
@@ -30,7 +24,6 @@ namespace Ordering.Domain.Entities
         public string ShippingAddress { get; set; }
         [Column(TypeName = "nvarchar(max)")]
         public string InvoiceAddress { get; set; }
-
-        public EOrderStatus Status { get; set; }
+        public int Status { get; set; }
     }
 }

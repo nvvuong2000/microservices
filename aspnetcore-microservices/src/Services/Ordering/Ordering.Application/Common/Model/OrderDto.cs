@@ -1,6 +1,6 @@
-﻿
-using Ordering.Application.Common.Mapping;
+﻿using Ordering.Application.Common.Mapping;
 using Ordering.Domain.Entities;
+using Ordering.Domain.Enum;
 
 namespace Ordering.Application.Common.Model
 {
@@ -16,6 +16,6 @@ namespace Ordering.Application.Common.Model
 
         public string ShippingAddress { get; set; }
         public string InvoiceAddress { get; set; }
-        public string Status { get; set; }
+        public EOrderStatus Status { get; set; }
     }
 }

@@ -1,15 +1,12 @@
-﻿using Ordering.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Constracts.Common.Interfaces;
+﻿using Constracts.Common.Interfaces;
+using Ordering.Domain.Entities;
 
 namespace Ordering.Application.Common.Interfaces
 {
     public interface IOrderRepository : IRepositoryBaseAsync<Order, long>
     {
         Task<IEnumerable<Order>> GetOrdersByUserName(string userName);
+
+        Task<Order> CreateOrder(Order order);
     }
 }

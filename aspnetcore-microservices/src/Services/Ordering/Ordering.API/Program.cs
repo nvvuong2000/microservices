@@ -1,45 +1,35 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
-
-using MediatR;
-using Ordering.Infrastructure;
 using Ordering.Infrastructure.Persistence;
-using System.Reflection;
+using Ordering.Infrastructure;
+using Ordering.API.Extensions;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddOptions();
-builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddInfrastructureServices(builder.Configuration);
-//ConfigureServices:
-//builder.Services.AddMediatR(typeof(Startup));
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace Ordering.API
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public class ProgramFGT
+    {
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args)
+                .Build()
+                .MigrateDatabase<OrderContext>(async (context, services) =>
+                {
+                    var logger = services.GetService<ILogger<OrderContextSeed>>();
+                    OrderContextSeed
+                           .SeedAsync(context,logger)
+                           .Wait();
+                })
+                .Run();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
 }
-
-// initial and seed db
-
-using (var scope = app.Services.CreateScope())
-{
-    var orderContextSeed = scope.ServiceProvider.GetRequiredService<OrderContextSeed>();
-    await orderContextSeed.InitializeAsync();
-    await orderContextSeed.SeedAsync();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

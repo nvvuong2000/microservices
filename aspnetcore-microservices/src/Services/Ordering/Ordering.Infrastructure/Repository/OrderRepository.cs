@@ -3,7 +3,11 @@ using Infrastructure.Common;
 using Microsoft.EntityFrameworkCore;
 using Ordering.Application.Common.Interfaces;
 using Ordering.Domain.Entities;
-using Ordering.Infrastructure.Persistence;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Ordering.Infrastructure.Repository
 {
@@ -14,8 +18,15 @@ namespace Ordering.Infrastructure.Repository
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByUserName(string userName) =>
-           
-            await FindByCondition(x=>x.UserName.Equals(userName)).ToListAsync();
-        
+
+            await FindByCondition(x => x.UserName.Equals(userName)).ToListAsync();
+
+        public async Task<Order> CreateOrder(Order order)
+        {
+            var id = await CreateAsync(order);
+            order.Id = id;
+            return order;
+        }
+
     }
 }
